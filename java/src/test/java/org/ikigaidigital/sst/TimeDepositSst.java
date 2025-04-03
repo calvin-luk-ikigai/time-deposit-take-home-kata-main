@@ -39,6 +39,8 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class TimeDepositSst {
 
+    private final String baseUrl = "/time-deposits";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -65,7 +67,7 @@ public class TimeDepositSst {
 
     @Test
     void testGetAllTimeDeposits() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/time-deposits")
+        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1))
@@ -80,18 +82,18 @@ public class TimeDepositSst {
 
     @Test
     void testUpdateAllTimeDeposits() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/time-deposits")
+        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].balance").value(1234))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].balance").value(5678));
 
         BigDecimal balance = BigDecimal.valueOf(2000.0);
-        mockMvc.perform(MockMvcRequestBuilders.post("/time-deposits/update-all-balances")
+        mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/balances")
                         .contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(new UpdateRequest(balance))))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/time-deposits")
+        mockMvc.perform(MockMvcRequestBuilders.get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].balance").value(balance))
