@@ -2,11 +2,13 @@ package org.ikigaidigital.driven.adapter;
 
 import org.ikigaidigital.application.port.driven.TimeDepositPort;
 import org.ikigaidigital.domain.TimeDeposit;
+import org.ikigaidigital.domain.TimeDepositCalculator;
 import org.ikigaidigital.driven.entity.TimeDepositEntity;
 import org.ikigaidigital.driven.mapper.TimeDepositMapper;
 import org.ikigaidigital.driven.repository.TimeDepositRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,14 +22,24 @@ public class TimeDepositAdapter implements TimeDepositPort {
     @Autowired
     private TimeDepositMapper timeDepositMapper;
 
+    @Autowired
+    private TimeDepositCalculator timeDepositCalculator;
+
     @Override
-    public void updateBalances(BigDecimal balance) {
-        List<TimeDepositEntity> timeDeposits = timeDepositRepository.findAll();
-        timeDeposits.forEach(timeDeposit -> {
-            timeDeposit.setBalance(balance);
+    @Transactional
+    public void updateBalances() {
+        List<TimeDepositEntity> timeDepositEntityList = timeDepositRepository.findAll();
+        List<TimeDeposit> timeDeposits = timeDepositMapper.map(timeDepositEntityList);
+        timeDepositCalculator.updateBalance(timeDeposits);
+
+        timeDepositEntityList.forEach(entity -> {
+            timeDeposits.stream()
+                    .filter(timeDeposit -> entity.getId().equals(timeDeposit.getId()))
+                    .findFirst()
+                    .ifPresent(timeDeposit -> entity.setBalance(BigDecimal.valueOf(timeDeposit.getBalance())));
         });
 
-        timeDepositRepository.saveAll(timeDeposits);
+        timeDepositRepository.saveAll(timeDepositEntityList);
     }
 
     @Override

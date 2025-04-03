@@ -1,12 +1,14 @@
 package org.ikigaidigital.domain;
 
 import org.ikigaidigital.interest.*;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 
+@Component
 public class TimeDepositCalculator {
     private static final int INTEREST_LESS_PERIOD_IN_DAYS = 30;
 

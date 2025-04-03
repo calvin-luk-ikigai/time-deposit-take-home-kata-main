@@ -16,8 +16,8 @@ public class TimeDepositController {
     private TimeDepositUseCase timeDepositUseCase;
 
     @PutMapping("/balances")
-    public void updateAllBalances(@RequestBody UpdateRequest request) {
-        timeDepositUseCase.updateBalances(request.getBalance());
+    public void updateAllBalances() {
+        timeDepositUseCase.updateBalances();
     }
 
     @GetMapping

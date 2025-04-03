@@ -1,11 +1,9 @@
 package org.ikigaidigital.sst;
 
-import com.google.gson.Gson;
 import org.ikigaidigital.DepositService;
 import org.ikigaidigital.application.TimeDepositService;
 import org.ikigaidigital.driven.entity.TimeDepositEntity;
 import org.ikigaidigital.driven.repository.TimeDepositRepository;
-import org.ikigaidigital.driving.dto.UpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -59,8 +57,9 @@ public class TimeDepositSst {
     @BeforeEach
     void setup() {
         List<TimeDepositEntity> timeDpositEntityList = new ArrayList<>();
-        timeDpositEntityList.add(new TimeDepositEntity(1, "basic", BigDecimal.valueOf(1234.0), 60));
-        timeDpositEntityList.add(new TimeDepositEntity(2, "student", BigDecimal.valueOf(5678), 60));
+        timeDpositEntityList.add(new TimeDepositEntity(1, "basic", BigDecimal.valueOf(1000), 60));
+        timeDpositEntityList.add(new TimeDepositEntity(2, "student", BigDecimal.valueOf(2000), 60));
+        timeDpositEntityList.add(new TimeDepositEntity(3, "premium", BigDecimal.valueOf(3000), 90));
 
         when(timeDepositRepository.findAll()).thenReturn(timeDpositEntityList);
     }
@@ -71,13 +70,17 @@ public class TimeDepositSst {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].balance").value(1234))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].balance").value(1000))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].planType").value("basic"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].days").value(60))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(2))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].balance").value(5678))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].balance").value(2000))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].planType").value("student"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].days").value(60));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].days").value(60))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].id").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].balance").value(3000))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].planType").value("premium"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].days").value(90));
     }
 
     @Test
@@ -85,18 +88,19 @@ public class TimeDepositSst {
         mockMvc.perform(MockMvcRequestBuilders.get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].balance").value(1234))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].balance").value(5678));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].balance").value(1000))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].balance").value(2000))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].balance").value(3000));
 
-        BigDecimal balance = BigDecimal.valueOf(2000.0);
         mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/balances")
-                        .contentType(MediaType.APPLICATION_JSON).content(new Gson().toJson(new UpdateRequest(balance))))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         mockMvc.perform(MockMvcRequestBuilders.get(baseUrl)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].balance").value(balance))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].balance").value(balance));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].balance").value(1000.83))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].balance").value(2005.00))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].balance").value(3012.50));
     }
 }

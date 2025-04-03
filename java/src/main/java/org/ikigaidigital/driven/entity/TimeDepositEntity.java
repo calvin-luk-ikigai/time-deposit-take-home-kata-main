@@ -19,6 +19,18 @@ public class TimeDepositEntity {
     @Column(nullable = false)
     private int days;
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setPlanType(String planType) {
+        this.planType = planType;
+    }
+
+    public void setDays(int days) {
+        this.days = days;
+    }
+
     public Integer getId() {
         return id;
     }
