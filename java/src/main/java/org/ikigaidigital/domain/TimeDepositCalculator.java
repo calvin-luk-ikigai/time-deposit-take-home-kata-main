@@ -1,6 +1,6 @@
 package org.ikigaidigital.domain;
 
-import org.ikigaidigital.interest.*;
+import org.ikigaidigital.domain.interest.*;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

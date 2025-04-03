@@ -2,7 +2,7 @@ package org.ikigaidigital;
 
 import org.ikigaidigital.domain.TimeDeposit;
 import org.ikigaidigital.domain.TimeDepositCalculator;
-import org.ikigaidigital.interest.PlanType;
+import org.ikigaidigital.domain.interest.PlanType;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;

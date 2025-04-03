@@ -1,4 +1,4 @@
-package org.ikigaidigital.interest;
+package org.ikigaidigital.domain.interest;
 
 import org.ikigaidigital.domain.TimeDeposit;
 
